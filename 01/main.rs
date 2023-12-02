@@ -1,41 +1,10 @@
-fn first_part(input: &String) {
-    let mut total = 0;
-
-    for item in input.lines() {
-        let mut left_most: Option<u32> = None;
-        let mut right_most: Option<u32> = None;
-
-        for c in item.chars() {
-            if let Some(number) = c.to_digit(10) {
-                if left_most == None {
-                    left_most = Some(number);
-                }
-
-                right_most = Some(number);
-            }
-        }
-
-        total += left_most.unwrap() * 10 + right_most.unwrap();
-    }
-
-    println!("First Part: {}", total);
-}
+static VALID_NUMBERS: [&str; 9] = [
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+];
 
 fn match_string_to_number(input: String) -> Option<u32> {
-    let valid_numbers = [
-        String::from("one"),
-        String::from("two"),
-        String::from("three"),
-        String::from("four"),
-        String::from("five"),
-        String::from("six"),
-        String::from("seven"),
-        String::from("eight"),
-        String::from("nine"),
-    ];
-
-    for i in 0..valid_numbers.len() {
-        if input.contains(&valid_numbers[i]) {
+    for i in 0..VALID_NUMBERS.len() {
+        if input.contains(VALID_NUMBERS[i]) {
             return Some(i as u32 + 1);
         }
     }
@@ -43,40 +12,63 @@ fn match_string_to_number(input: String) -> Option<u32> {
     return None;
 }
 
+fn find_left_most(input: &Vec<char>, only_digit: bool) -> Option<u32> {
+    for i in 0..input.len() {
+        if let Some(number) = input[i].to_digit(10) {
+            return Some(number);
+        }
+
+        if !only_digit {
+            if let Some(number) = match_string_to_number(input[..=i].iter().collect()) {
+                return Some(number);
+            }
+        }
+    }
+
+    return None;
+}
+
+fn find_right_most(input: &Vec<char>, only_digit: bool) -> Option<u32> {
+    for i in (0..input.len()).rev() {
+        if let Some(number) = input[i].to_digit(10) {
+            return Some(number);
+        }
+
+        if !only_digit {
+            if let Some(number) = match_string_to_number(input[i..].iter().collect()) {
+                return Some(number);
+            }
+        }
+    }
+
+    return None;
+}
+
+fn first_part(input: &String) {
+    let mut total = 0;
+
+    for item in input.lines() {
+        let item_as_vec: Vec<char> = item.chars().collect();
+
+        let left_most = find_left_most(&item_as_vec, true).unwrap();
+        let right_most = find_right_most(&item_as_vec, true).unwrap();
+
+        total += left_most * 10 + right_most;
+    }
+
+    println!("First Part: {}", total);
+}
+
 fn second_part(input: &String) {
     let mut total = 0;
 
     for item in input.lines() {
-        let mut left_most: Option<u32> = None;
-        let mut right_most: Option<u32> = None;
-
         let item_as_vec: Vec<char> = item.chars().collect();
 
-        for i in 0..item.len() {
-            if let Some(number) = item_as_vec[i].to_digit(10) {
-                left_most = Some(number);
-                break;
-            }
+        let left_most = find_left_most(&item_as_vec, false).unwrap();
+        let right_most = find_right_most(&item_as_vec, false).unwrap();
 
-            if let Some(number) = match_string_to_number(item_as_vec[..=i].iter().collect()) {
-                left_most = Some(number);
-                break;
-            }
-        }
-
-        for i in (0..item.len()).rev() {
-            if let Some(number) = item_as_vec[i].to_digit(10) {
-                right_most = Some(number);
-                break;
-            }
-
-            if let Some(number) = match_string_to_number(item_as_vec[i..].iter().collect()) {
-                right_most = Some(number);
-                break;
-            }
-        }
-
-        total += left_most.unwrap() * 10 + right_most.unwrap();
+        total += left_most * 10 + right_most;
     }
 
     println!("Second Part: {}", total);
