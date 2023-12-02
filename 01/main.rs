@@ -21,7 +21,7 @@ fn first_part(input: &String) {
     println!("First Part: {}", total);
 }
 
-fn second_part(input: &String) {
+fn match_string_to_number(input: String) -> Option<u32> {
     let valid_numbers = [
         String::from("one"),
         String::from("two"),
@@ -34,42 +34,45 @@ fn second_part(input: &String) {
         String::from("nine"),
     ];
 
+    for i in 0..valid_numbers.len() {
+        if input.contains(&valid_numbers[i]) {
+            return Some(i as u32 + 1);
+        }
+    }
+
+    return None;
+}
+
+fn second_part(input: &String) {
     let mut total = 0;
 
     for item in input.lines() {
         let mut left_most: Option<u32> = None;
         let mut right_most: Option<u32> = None;
 
-        let mut curr: Vec<char> = Vec::new();
+        let item_as_vec: Vec<char> = item.chars().collect();
 
-        for c in item.chars() {
-            if let Some(number) = c.to_digit(10) {
-                if left_most == None {
-                    left_most = Some(number);
-                }
-
-                right_most = Some(number);
-                curr.clear();
-                continue;
+        for i in 0..item.len() {
+            if let Some(number) = item_as_vec[i].to_digit(10) {
+                left_most = Some(number);
+                break;
             }
 
-            curr.push(c);
+            if let Some(number) = match_string_to_number(item_as_vec[..=i].iter().collect()) {
+                left_most = Some(number);
+                break;
+            }
+        }
 
-            let curr_string: String = curr.iter().collect();
+        for i in (0..item.len()).rev() {
+            if let Some(number) = item_as_vec[i].to_digit(10) {
+                right_most = Some(number);
+                break;
+            }
 
-            for item in valid_numbers.iter() {
-                if curr_string.contains(item) {
-                    let value =
-                        Some(valid_numbers.iter().position(|r| r == item).unwrap() as u32 + 1);
-
-                    if left_most == None {
-                        left_most = value;
-                    }
-
-                    right_most = value;
-                    curr.clear();
-                    break;
-                }
+            if let Some(number) = match_string_to_number(item_as_vec[i..].iter().collect()) {
+                right_most = Some(number);
+                break;
             }
         }
 
