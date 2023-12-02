@@ -14,32 +14,34 @@ fn first_part(input: &String) {
     let mut total: u16 = 0;
 
     for line in input.lines() {
-        let line_as_vec = line.split(": ").collect::<Vec<&str>>();
-        let id: u8 = line_as_vec[0].split(" ").collect::<Vec<&str>>()[1]
+        let line_as_vec: Vec<&str> = line.split(": ").collect();
+
+        let id: u16 = line_as_vec[0].split(" ").collect::<Vec<&str>>()[1]
             .parse()
             .unwrap();
-
         let shows: Vec<&str> = line_as_vec[1].split("; ").collect();
+
         let mut is_possible = true;
 
         for show in shows {
-            let colors = show.split(", ").collect::<Vec<&str>>();
+            let colors: Vec<&str> = show.split(", ").collect();
 
             for color in colors {
-                let color_as_vec = color.split(" ").collect::<Vec<&str>>();
+                let color_as_vec: Vec<&str> = color.split(" ").collect();
+
                 match color_as_vec[1] {
                     "red" => {
-                        if config.red < color_as_vec[0].parse::<u8>().unwrap() {
+                        if config.red < color_as_vec[0].parse().unwrap() {
                             is_possible = false;
                         }
                     }
                     "green" => {
-                        if config.green < color_as_vec[0].parse::<u8>().unwrap() {
+                        if config.green < color_as_vec[0].parse().unwrap() {
                             is_possible = false;
                         }
                     }
                     "blue" => {
-                        if config.blue < color_as_vec[0].parse::<u8>().unwrap() {
+                        if config.blue < color_as_vec[0].parse().unwrap() {
                             is_possible = false;
                         }
                     }
@@ -49,7 +51,7 @@ fn first_part(input: &String) {
         }
 
         if is_possible {
-            total += id as u16;
+            total += id;
         }
     }
 
@@ -66,32 +68,32 @@ fn second_part(input: &String) {
             blue: 0,
         };
 
-        let line_as_vec = line.split(": ").collect::<Vec<&str>>();
+        let line_as_vec: Vec<&str> = line.split(": ").collect();
         let shows: Vec<&str> = line_as_vec[1].split("; ").collect();
 
         for show in shows {
             let colors = show.split(", ").collect::<Vec<&str>>();
 
             for color in colors {
-                let color_as_vec = color.split(" ").collect::<Vec<&str>>();
+                let color_as_vec: Vec<&str> = color.split(" ").collect();
 
                 match color_as_vec[1] {
                     "red" => {
-                        let amount = color_as_vec[0].parse::<u8>().unwrap();
+                        let amount = color_as_vec[0].parse().unwrap();
 
                         if config.red < amount {
                             config.red = amount;
                         }
                     }
                     "green" => {
-                        let amount = color_as_vec[0].parse::<u8>().unwrap();
+                        let amount = color_as_vec[0].parse().unwrap();
 
                         if config.green < amount {
                             config.green = amount;
                         }
                     }
                     "blue" => {
-                        let amount = color_as_vec[0].parse::<u8>().unwrap();
+                        let amount = color_as_vec[0].parse().unwrap();
 
                         if config.blue < amount {
                             config.blue = amount;
