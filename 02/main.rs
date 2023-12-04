@@ -11,14 +11,12 @@ fn first_part(input: &String) {
         blue: 14,
     };
 
-    let mut total: u16 = 0;
+    let mut total = 0;
 
     for line in input.lines() {
         let line_as_vec: Vec<&str> = line.split(": ").collect();
 
-        let id: u16 = line_as_vec[0].split(" ").collect::<Vec<&str>>()[1]
-            .parse()
-            .unwrap();
+        let id: u16 = line_as_vec[0].split(" ").nth(1).unwrap().parse().unwrap();
         let shows: Vec<&str> = line_as_vec[1].split("; ").collect();
 
         let mut is_possible = true;
@@ -59,7 +57,7 @@ fn first_part(input: &String) {
 }
 
 fn second_part(input: &String) {
-    let mut total: u32 = 0;
+    let mut total = 0;
 
     for line in input.lines() {
         let mut config = Config {
@@ -68,8 +66,7 @@ fn second_part(input: &String) {
             blue: 0,
         };
 
-        let line_as_vec: Vec<&str> = line.split(": ").collect();
-        let shows: Vec<&str> = line_as_vec[1].split("; ").collect();
+        let shows: Vec<&str> = line.split(": ").nth(1).unwrap().split("; ").collect();
 
         for show in shows {
             let colors = show.split(", ").collect::<Vec<&str>>();

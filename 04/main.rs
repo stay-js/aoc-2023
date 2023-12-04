@@ -1,15 +1,13 @@
 fn parse_line(line: &str) -> (Vec<u32>, Vec<u32>) {
-    let line_vec: Vec<&str> = line.split(": ").collect();
+    let data: Vec<&str> = line.split(": ").nth(1).unwrap().split(" | ").collect();
 
-    let numbers_vec: Vec<&str> = line_vec[1].split(" | ").collect();
-
-    let winning_numbers = numbers_vec[0]
+    let winning_numbers = data[0]
         .split(" ")
         .filter(|&x| x != "")
         .map(|x| x.parse::<u32>().unwrap())
         .collect::<Vec<u32>>();
 
-    let numbers = numbers_vec[1]
+    let numbers = data[1]
         .split(" ")
         .filter(|&x| x != "")
         .map(|x| x.parse::<u32>().unwrap())

@@ -48,10 +48,10 @@ fn first_part(input: &String) {
     let mut total = 0;
 
     for item in input.lines() {
-        let item_as_vec: Vec<char> = item.chars().collect();
+        let chars: Vec<char> = item.chars().collect();
 
-        let left_most = find_left_most(&item_as_vec, true).unwrap();
-        let right_most = find_right_most(&item_as_vec, true).unwrap();
+        let left_most = find_left_most(&chars, true).unwrap();
+        let right_most = find_right_most(&chars, true).unwrap();
 
         total += left_most * 10 + right_most;
     }
@@ -63,10 +63,10 @@ fn second_part(input: &String) {
     let mut total = 0;
 
     for item in input.lines() {
-        let item_as_vec: Vec<char> = item.chars().collect();
+        let chars: Vec<char> = item.chars().collect();
 
-        let left_most = find_left_most(&item_as_vec, false).unwrap();
-        let right_most = find_right_most(&item_as_vec, false).unwrap();
+        let left_most = find_left_most(&chars, false).unwrap();
+        let right_most = find_right_most(&chars, false).unwrap();
 
         total += left_most * 10 + right_most;
     }
