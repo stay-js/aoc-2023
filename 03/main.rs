@@ -111,14 +111,69 @@ fn first_part(input: &String) {
     );
 }
 
+fn second_part(input: &String) {
+    let data = input
+        .lines()
+        .map(|line| line.chars().collect::<Vec<char>>())
+        .collect::<Vec<Vec<char>>>();
+
+    let mut numbers: Vec<Number> = Vec::new();
+
+    let mut curr_vec: Vec<char> = Vec::new();
+    let mut start: i32 = -1;
+    let mut end: i32 = -1;
+
+    for (i, row) in data.iter().enumerate() {
+        for (j, ch) in row.iter().enumerate() {
+            if ch.is_digit(10) {
+                if start == -1 {
+                    start = j as i32;
+                }
+
+                curr_vec.push(*ch);
+                end = j as i32;
+
+                if j == row.len() - 1 {
+                    save_and_reset(&mut numbers, &mut curr_vec, i, &mut start, &mut end);
+                }
+            } else if start != -1 {
+                save_and_reset(&mut numbers, &mut curr_vec, i, &mut start, &mut end);
+            }
+        }
+    }
+
+    let mut total = 0;
+
+    for (i, row) in data.iter().enumerate() {
+        for (j, ch) in row.iter().enumerate() {
+            if *ch != '*' {
+                continue;
+            }
+
+            let adjacent_nums: Vec<&Number> = numbers
+                .iter()
+                .filter(|num| {
+                    num.row >= i - 1 && num.row <= i + 1 && num.start <= j + 1 && num.end >= j - 1
+                })
+                .collect();
+
+            if adjacent_nums.len() == 2 {
+                total += adjacent_nums[0].value * adjacent_nums[1].value;
+            }
+        }
+    }
+
+    println!("Second part: {}", total);
+}
+
 fn main() {
     println!("demo-input.txt:");
     let input = std::fs::read_to_string("./03/demo-input.txt").unwrap();
     first_part(&input);
-    // second_part(&input);
+    second_part(&input);
 
     println!("\ninput.txt:");
     let input = std::fs::read_to_string("./03/input.txt").unwrap();
     first_part(&input);
-    // second_part(&input);
+    second_part(&input);
 }
