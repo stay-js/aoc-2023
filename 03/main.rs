@@ -24,22 +24,14 @@ fn save_and_reset(
     *curr_vec = Vec::new();
 }
 
-fn first_part(input: &String) {
-    let data = input
-        .lines()
-        .map(|line| line.chars().collect::<Vec<char>>())
-        .collect::<Vec<Vec<char>>>();
-
-    let h = data.len();
-    let w = data[0].len();
-
+fn get_number(grid: &Vec<Vec<char>>) -> Vec<Number> {
     let mut numbers: Vec<Number> = Vec::new();
 
     let mut curr_vec: Vec<char> = Vec::new();
     let mut start: i32 = -1;
     let mut end: i32 = -1;
 
-    for (i, row) in data.iter().enumerate() {
+    for (i, row) in grid.iter().enumerate() {
         for (j, ch) in row.iter().enumerate() {
             if ch.is_digit(10) {
                 if start == -1 {
@@ -58,29 +50,43 @@ fn first_part(input: &String) {
         }
     }
 
+    return numbers;
+}
+
+fn first_part(input: &String) {
+    let grid = input
+        .lines()
+        .map(|line| line.chars().collect::<Vec<char>>())
+        .collect::<Vec<Vec<char>>>();
+
+    let h = grid.len();
+    let w = grid[0].len();
+
+    let numbers = get_number(&grid);
+
     let parts = numbers
         .iter()
-        .filter(|x| {
-            if x.start != 0
-                && data[x.row][x.start - 1] != '.'
-                && !data[x.row][x.start - 1].is_digit(10)
+        .filter(|num| {
+            if num.start != 0
+                && grid[num.row][num.start - 1] != '.'
+                && !grid[num.row][num.start - 1].is_digit(10)
             {
                 return true;
             }
 
-            if x.end != w - 1
-                && data[x.row][x.end + 1] != '.'
-                && !data[x.row][x.end + 1].is_digit(10)
+            if num.end != w - 1
+                && grid[num.row][num.end + 1] != '.'
+                && !grid[num.row][num.end + 1].is_digit(10)
             {
                 return true;
             }
 
-            if x.row != 0 {
-                let start = if x.start == 0 { 0 } else { x.start - 1 };
-                let end = if x.end == w - 1 { w - 1 } else { x.end + 1 };
+            if num.row != 0 {
+                let start = if num.start == 0 { 0 } else { num.start - 1 };
+                let end = if num.end == w - 1 { w - 1 } else { num.end + 1 };
 
                 for i in start..=end {
-                    let ch = data[x.row - 1][i];
+                    let ch = grid[num.row - 1][i];
 
                     if ch != '.' && !ch.is_digit(10) {
                         return true;
@@ -88,12 +94,12 @@ fn first_part(input: &String) {
                 }
             }
 
-            if x.row != h - 1 {
-                let start = if x.start == 0 { 0 } else { x.start - 1 };
-                let end = if x.end == w - 1 { w - 1 } else { x.end + 1 };
+            if num.row != h - 1 {
+                let start = if num.start == 0 { 0 } else { num.start - 1 };
+                let end = if num.end == w - 1 { w - 1 } else { num.end + 1 };
 
                 for i in start..=end {
-                    let ch = data[x.row + 1][i];
+                    let ch = grid[num.row + 1][i];
 
                     if ch != '.' && !ch.is_digit(10) {
                         return true;
@@ -107,58 +113,35 @@ fn first_part(input: &String) {
 
     println!(
         "First part: {}",
-        parts.iter().fold(0, |acc, x| acc + x.value)
+        parts.iter().fold(0, |acc, num| acc + num.value)
     );
 }
 
 fn second_part(input: &String) {
-    let data = input
+    let grid = input
         .lines()
         .map(|line| line.chars().collect::<Vec<char>>())
         .collect::<Vec<Vec<char>>>();
 
-    let mut numbers: Vec<Number> = Vec::new();
-
-    let mut curr_vec: Vec<char> = Vec::new();
-    let mut start: i32 = -1;
-    let mut end: i32 = -1;
-
-    for (i, row) in data.iter().enumerate() {
-        for (j, ch) in row.iter().enumerate() {
-            if ch.is_digit(10) {
-                if start == -1 {
-                    start = j as i32;
-                }
-
-                curr_vec.push(*ch);
-                end = j as i32;
-
-                if j == row.len() - 1 {
-                    save_and_reset(&mut numbers, &mut curr_vec, i, &mut start, &mut end);
-                }
-            } else if start != -1 {
-                save_and_reset(&mut numbers, &mut curr_vec, i, &mut start, &mut end);
-            }
-        }
-    }
+    let numbers = get_number(&grid);
 
     let mut total = 0;
 
-    for (i, row) in data.iter().enumerate() {
+    for (i, row) in grid.iter().enumerate() {
         for (j, ch) in row.iter().enumerate() {
             if *ch != '*' {
                 continue;
             }
 
-            let adjacent_nums: Vec<&Number> = numbers
+            let adjacent_numbers: Vec<&Number> = numbers
                 .iter()
                 .filter(|num| {
                     num.row >= i - 1 && num.row <= i + 1 && num.start <= j + 1 && num.end >= j - 1
                 })
                 .collect();
 
-            if adjacent_nums.len() == 2 {
-                total += adjacent_nums[0].value * adjacent_nums[1].value;
+            if adjacent_numbers.len() == 2 {
+                total += adjacent_numbers[0].value * adjacent_numbers[1].value;
             }
         }
     }
