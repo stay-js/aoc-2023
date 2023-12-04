@@ -7,13 +7,13 @@ struct Number {
 
 fn save_and_reset(
     numbers: &mut Vec<Number>,
-    curr_vec: &mut Vec<char>,
+    current: &mut String,
     row: usize,
     start: &mut i32,
     end: &mut i32,
 ) {
     numbers.push(Number {
-        value: curr_vec.iter().collect::<String>().parse::<u32>().unwrap(),
+        value: current.parse::<u32>().unwrap(),
         row,
         start: *start as usize,
         end: *end as usize,
@@ -21,13 +21,13 @@ fn save_and_reset(
 
     *start = -1;
     *end = -1;
-    *curr_vec = Vec::new();
+    *current = String::new();
 }
 
-fn get_number(grid: &Vec<Vec<char>>) -> Vec<Number> {
+fn get_numbers(grid: &Vec<Vec<char>>) -> Vec<Number> {
     let mut numbers: Vec<Number> = Vec::new();
 
-    let mut curr_vec: Vec<char> = Vec::new();
+    let mut current = String::new();
     let mut start: i32 = -1;
     let mut end: i32 = -1;
 
@@ -38,14 +38,14 @@ fn get_number(grid: &Vec<Vec<char>>) -> Vec<Number> {
                     start = j as i32;
                 }
 
-                curr_vec.push(*ch);
+                current.push(*ch);
                 end = j as i32;
 
                 if j == row.len() - 1 {
-                    save_and_reset(&mut numbers, &mut curr_vec, i, &mut start, &mut end);
+                    save_and_reset(&mut numbers, &mut current, i, &mut start, &mut end);
                 }
             } else if start != -1 {
-                save_and_reset(&mut numbers, &mut curr_vec, i, &mut start, &mut end);
+                save_and_reset(&mut numbers, &mut current, i, &mut start, &mut end);
             }
         }
     }
@@ -62,7 +62,7 @@ fn first_part(input: &String) {
     let h = grid.len();
     let w = grid[0].len();
 
-    let numbers = get_number(&grid);
+    let numbers = get_numbers(&grid);
 
     let parts = numbers
         .iter()
@@ -123,7 +123,7 @@ fn second_part(input: &String) {
         .map(|line| line.chars().collect::<Vec<char>>())
         .collect::<Vec<Vec<char>>>();
 
-    let numbers = get_number(&grid);
+    let numbers = get_numbers(&grid);
 
     let mut total = 0;
 
