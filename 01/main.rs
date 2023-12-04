@@ -1,4 +1,4 @@
-static VALID_NUMBERS: [&str; 9] = [
+const VALID_NUMBERS: [&str; 9] = [
     "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
 ];
 
