@@ -56,7 +56,7 @@ fn first_part(input: &String) {
         total += left_most * 10 + right_most;
     }
 
-    println!("First Part: {}", total);
+    println!("First part: {}", total);
 }
 
 fn second_part(input: &String) {
@@ -71,7 +71,7 @@ fn second_part(input: &String) {
         total += left_most * 10 + right_most;
     }
 
-    println!("Second Part: {}", total);
+    println!("Second part: {}", total);
 }
 
 fn main() {
