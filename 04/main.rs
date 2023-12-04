@@ -32,21 +32,15 @@ fn first_part(input: &String) {
         total += game_total;
     }
 
-    println!("Total: {}", total);
+    println!("First part: {}", total);
 }
 
 fn second_part(input: &String) {
-    let mut total = 0;
+    let mut copies: Vec<usize> = Vec::new();
+    copies.resize(input.lines().count(), 1);
 
-    for line in input.lines() {
+    for (i, line) in input.lines().enumerate() {
         let line_vec: Vec<&str> = line.split(": ").collect();
-
-        let game_id = line_vec[0]
-            .split(" ")
-            .nth(1)
-            .unwrap()
-            .parse::<u8>()
-            .unwrap();
 
         let numbers_vec: Vec<&str> = line_vec[1].split(" | ").collect();
 
@@ -62,10 +56,7 @@ fn second_part(input: &String) {
             .map(|x| x.parse::<u32>().unwrap())
             .collect::<Vec<u32>>();
 
-        println!("Game ID: {}", game_id);
         let mut game_total = 0;
-
-        // println!("{:?}, {:?}", winning_numbers, numbers);
 
         for number in numbers {
             if winning_numbers.contains(&number) {
@@ -73,12 +64,18 @@ fn second_part(input: &String) {
             }
         }
 
-        // println!("Game total: {}", game_total);
+        let mut max = i + game_total + 1;
 
-        total += game_total;
+        if max > copies.len() {
+            max = copies.len();
+        }
+
+        for j in i + 1..max {
+            copies[j] += 1 * copies[i];
+        }
     }
 
-    println!("Total: {}", total);
+    println!("Second parts: {}", copies.iter().sum::<usize>());
 }
 
 fn main() {
@@ -90,5 +87,5 @@ fn main() {
     println!("\ninput.txt:");
     let input = std::fs::read_to_string("./04/input.txt").unwrap();
     first_part(&input);
-    // second_part(&input);
+    second_part(&input);
 }
