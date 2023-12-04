@@ -35,11 +35,57 @@ fn first_part(input: &String) {
     println!("Total: {}", total);
 }
 
+fn second_part(input: &String) {
+    let mut total = 0;
+
+    for line in input.lines() {
+        let line_vec: Vec<&str> = line.split(": ").collect();
+
+        let game_id = line_vec[0]
+            .split(" ")
+            .nth(1)
+            .unwrap()
+            .parse::<u8>()
+            .unwrap();
+
+        let numbers_vec: Vec<&str> = line_vec[1].split(" | ").collect();
+
+        let winning_numbers = numbers_vec[0]
+            .split(" ")
+            .filter(|&x| x != "")
+            .map(|x| x.parse::<u32>().unwrap())
+            .collect::<Vec<u32>>();
+
+        let numbers = numbers_vec[1]
+            .split(" ")
+            .filter(|&x| x != "")
+            .map(|x| x.parse::<u32>().unwrap())
+            .collect::<Vec<u32>>();
+
+        println!("Game ID: {}", game_id);
+        let mut game_total = 0;
+
+        // println!("{:?}, {:?}", winning_numbers, numbers);
+
+        for number in numbers {
+            if winning_numbers.contains(&number) {
+                game_total += 1;
+            }
+        }
+
+        // println!("Game total: {}", game_total);
+
+        total += game_total;
+    }
+
+    println!("Total: {}", total);
+}
+
 fn main() {
     println!("demo-input.txt:");
     let input = std::fs::read_to_string("./04/demo-input.txt").unwrap();
     first_part(&input);
-    // second_part(&input);
+    second_part(&input);
 
     println!("\ninput.txt:");
     let input = std::fs::read_to_string("./04/input.txt").unwrap();

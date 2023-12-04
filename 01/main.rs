@@ -82,7 +82,7 @@ fn main() {
     second_part(&std::fs::read_to_string("./01/demo-input-2.txt").unwrap());
 
     println!("\ninput.txt:");
-    let file_as_string = std::fs::read_to_string("./01/input.txt").unwrap();
-    first_part(&file_as_string);
-    second_part(&file_as_string);
+    let input = std::fs::read_to_string("./01/input.txt").unwrap();
+    first_part(&input);
+    second_part(&input);
 }
