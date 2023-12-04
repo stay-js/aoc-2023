@@ -26,7 +26,7 @@ fn first_part(input: &String) {
 
         let winning = winning_numbers.intersection(&numbers).count();
 
-        if winning != 0 {
+        if winning > 0 {
             total += u32::pow(2, winning as u32 - 1);
         }
     }
