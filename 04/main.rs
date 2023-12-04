@@ -1,21 +1,28 @@
+fn parse_line(line: &str) -> (Vec<u32>, Vec<u32>) {
+    let line_vec: Vec<&str> = line.split(": ").collect();
+
+    let numbers_vec: Vec<&str> = line_vec[1].split(" | ").collect();
+
+    let winning_numbers = numbers_vec[0]
+        .split(" ")
+        .filter(|&x| x != "")
+        .map(|x| x.parse::<u32>().unwrap())
+        .collect::<Vec<u32>>();
+
+    let numbers = numbers_vec[1]
+        .split(" ")
+        .filter(|&x| x != "")
+        .map(|x| x.parse::<u32>().unwrap())
+        .collect::<Vec<u32>>();
+
+    return (winning_numbers, numbers);
+}
+
 fn first_part(input: &String) {
     let mut total = 0;
 
     for line in input.lines() {
-        let line_vec: Vec<&str> = line.split(": ").collect();
-        let numbers_vec: Vec<&str> = line_vec[1].split(" | ").collect();
-
-        let winning_numbers = numbers_vec[0]
-            .split(" ")
-            .filter(|&x| x != "")
-            .map(|x| x.parse::<u32>().unwrap())
-            .collect::<Vec<u32>>();
-
-        let numbers = numbers_vec[1]
-            .split(" ")
-            .filter(|&x| x != "")
-            .map(|x| x.parse::<u32>().unwrap())
-            .collect::<Vec<u32>>();
+        let (winning_numbers, numbers) = parse_line(line);
 
         let mut game_total = 0;
 
@@ -40,21 +47,7 @@ fn second_part(input: &String) {
     copies.resize(input.lines().count(), 1);
 
     for (i, line) in input.lines().enumerate() {
-        let line_vec: Vec<&str> = line.split(": ").collect();
-
-        let numbers_vec: Vec<&str> = line_vec[1].split(" | ").collect();
-
-        let winning_numbers = numbers_vec[0]
-            .split(" ")
-            .filter(|&x| x != "")
-            .map(|x| x.parse::<u32>().unwrap())
-            .collect::<Vec<u32>>();
-
-        let numbers = numbers_vec[1]
-            .split(" ")
-            .filter(|&x| x != "")
-            .map(|x| x.parse::<u32>().unwrap())
-            .collect::<Vec<u32>>();
+        let (winning_numbers, numbers) = parse_line(line);
 
         let mut game_total = 0;
 
@@ -70,12 +63,12 @@ fn second_part(input: &String) {
             max = copies.len();
         }
 
-        for j in i + 1..max {
-            copies[j] += 1 * copies[i];
+        for j in (i + 1)..max {
+            copies[j] += copies[i];
         }
     }
 
-    println!("Second parts: {}", copies.iter().sum::<usize>());
+    println!("Second part: {}", copies.iter().sum::<usize>());
 }
 
 fn main() {
