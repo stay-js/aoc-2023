@@ -35,8 +35,7 @@ fn first_part(input: &String) {
 }
 
 fn second_part(input: &String) {
-    let mut copies: Vec<usize> = Vec::new();
-    copies.resize(input.lines().count(), 1);
+    let mut copies: Vec<u32> = (0..input.lines().count()).map(|_| 1).collect();
 
     for (i, line) in input.lines().enumerate() {
         let (winning_numbers, numbers) = parse_line(line);
@@ -52,7 +51,7 @@ fn second_part(input: &String) {
         }
     }
 
-    println!("Second part: {}", copies.iter().sum::<usize>());
+    println!("Second part: {}", copies.iter().sum::<u32>());
 }
 
 fn main() {
