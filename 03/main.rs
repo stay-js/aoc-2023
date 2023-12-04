@@ -1,6 +1,6 @@
 struct Number {
     value: u32,
-    row: usize,
+    y: usize,
     start: usize,
     end: usize,
 }
@@ -8,13 +8,13 @@ struct Number {
 fn save_and_reset(
     numbers: &mut Vec<Number>,
     current: &mut String,
-    row: usize,
+    y: usize,
     start: &mut i32,
     end: &mut i32,
 ) {
     numbers.push(Number {
         value: current.parse::<u32>().unwrap(),
-        row,
+        y,
         start: *start as usize,
         end: *end as usize,
     });
@@ -31,21 +31,21 @@ fn get_numbers(grid: &Vec<Vec<char>>) -> Vec<Number> {
     let mut start: i32 = -1;
     let mut end: i32 = -1;
 
-    for (i, row) in grid.iter().enumerate() {
-        for (j, ch) in row.iter().enumerate() {
+    for (y, row) in grid.iter().enumerate() {
+        for (x, ch) in row.iter().enumerate() {
             if ch.is_digit(10) {
                 if start == -1 {
-                    start = j as i32;
+                    start = x as i32;
                 }
 
                 current.push(*ch);
-                end = j as i32;
+                end = x as i32;
 
-                if j == row.len() - 1 {
-                    save_and_reset(&mut numbers, &mut current, i, &mut start, &mut end);
+                if x == row.len() - 1 {
+                    save_and_reset(&mut numbers, &mut current, y, &mut start, &mut end);
                 }
             } else if start != -1 {
-                save_and_reset(&mut numbers, &mut current, i, &mut start, &mut end);
+                save_and_reset(&mut numbers, &mut current, y, &mut start, &mut end);
             }
         }
     }
@@ -68,25 +68,25 @@ fn first_part(input: &String) {
         .iter()
         .filter(|num| {
             if num.start != 0
-                && grid[num.row][num.start - 1] != '.'
-                && !grid[num.row][num.start - 1].is_digit(10)
+                && grid[num.y][num.start - 1] != '.'
+                && !grid[num.y][num.start - 1].is_digit(10)
             {
                 return true;
             }
 
             if num.end != w - 1
-                && grid[num.row][num.end + 1] != '.'
-                && !grid[num.row][num.end + 1].is_digit(10)
+                && grid[num.y][num.end + 1] != '.'
+                && !grid[num.y][num.end + 1].is_digit(10)
             {
                 return true;
             }
 
-            if num.row != 0 {
+            if num.y != 0 {
                 let start = if num.start == 0 { 0 } else { num.start - 1 };
                 let end = if num.end == w - 1 { w - 1 } else { num.end + 1 };
 
                 for i in start..=end {
-                    let ch = grid[num.row - 1][i];
+                    let ch = grid[num.y - 1][i];
 
                     if ch != '.' && !ch.is_digit(10) {
                         return true;
@@ -94,12 +94,12 @@ fn first_part(input: &String) {
                 }
             }
 
-            if num.row != h - 1 {
+            if num.y != h - 1 {
                 let start = if num.start == 0 { 0 } else { num.start - 1 };
                 let end = if num.end == w - 1 { w - 1 } else { num.end + 1 };
 
                 for i in start..=end {
-                    let ch = grid[num.row + 1][i];
+                    let ch = grid[num.y + 1][i];
 
                     if ch != '.' && !ch.is_digit(10) {
                         return true;
@@ -127,8 +127,8 @@ fn second_part(input: &String) {
 
     let mut total = 0;
 
-    for (i, row) in grid.iter().enumerate() {
-        for (j, ch) in row.iter().enumerate() {
+    for (y, row) in grid.iter().enumerate() {
+        for (x, ch) in row.iter().enumerate() {
             if *ch != '*' {
                 continue;
             }
@@ -136,7 +136,7 @@ fn second_part(input: &String) {
             let adjacent_numbers: Vec<&Number> = numbers
                 .iter()
                 .filter(|num| {
-                    num.row >= i - 1 && num.row <= i + 1 && num.start <= j + 1 && num.end >= j - 1
+                    num.y >= y - 1 && num.y <= y + 1 && num.start <= x + 1 && num.end >= x - 1
                 })
                 .collect();
 
