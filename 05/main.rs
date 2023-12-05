@@ -53,7 +53,7 @@ fn first_part(input: &String) {
     println!("First part: {}", current.iter().min().unwrap());
 }
 
-fn second_part(input: &String) {
+fn second_part_bf(input: &String) {
     let data: Vec<&str> = input.split("\n\n").collect();
 
     let mut current = data[0]
@@ -71,17 +71,20 @@ fn second_part(input: &String) {
         current = map_to_next(current, parse_item(data[i]));
     }
 
-    println!("Second part: {}", current.iter().min().unwrap());
+    println!(
+        "Second part (brute force): {}",
+        current.iter().min().unwrap()
+    );
 }
 
 fn main() {
     println!("demo-input.txt:");
     let input = std::fs::read_to_string("./05/demo-input.txt").unwrap();
     first_part(&input);
-    second_part(&input);
+    second_part_bf(&input);
 
     println!("\ninput.txt:");
     let input = std::fs::read_to_string("./05/input.txt").unwrap();
     first_part(&input);
-    // second_part(&input);
+    second_part_bf(&input);
 }
