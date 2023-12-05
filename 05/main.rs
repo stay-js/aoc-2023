@@ -53,11 +53,32 @@ fn first_part(input: &String) {
     println!("First part: {}", current.iter().min().unwrap());
 }
 
+fn second_part(input: &String) {
+    let data: Vec<&str> = input.split("\n\n").collect();
+
+    let mut current = data[0]
+        .split(": ")
+        .nth(1)
+        .unwrap()
+        .split(" ")
+        .map(|x| x.parse::<u64>().unwrap())
+        .collect::<Vec<u64>>()
+        .chunks(2)
+        .flat_map(|x| x[0]..x[0] + x[1])
+        .collect();
+
+    for i in 1..data.len() {
+        current = map_to_next(current, parse_item(data[i]));
+    }
+
+    println!("Second part: {}", current.iter().min().unwrap());
+}
+
 fn main() {
     println!("demo-input.txt:");
     let input = std::fs::read_to_string("./05/demo-input.txt").unwrap();
     first_part(&input);
-    // second_part(&input);
+    second_part(&input);
 
     println!("\ninput.txt:");
     let input = std::fs::read_to_string("./05/input.txt").unwrap();
