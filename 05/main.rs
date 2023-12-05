@@ -1,30 +1,35 @@
-#[derive(Debug)]
-struct Data {
-    seeds: Vec<u32>,
-    seed_to_soil_map: Vec<(Vec<u32>, Vec<u32>)>,
-    soil_to_fertilizer: Vec<(Vec<u32>, Vec<u32>)>,
-    fertilizer_to_water: Vec<(Vec<u32>, Vec<u32>)>,
-    water_to_light: Vec<(Vec<u32>, Vec<u32>)>,
-    light_to_temperature: Vec<(Vec<u32>, Vec<u32>)>,
-    temperature_to_humidity: Vec<(Vec<u32>, Vec<u32>)>,
-    humidity_to_location: Vec<(Vec<u32>, Vec<u32>)>,
+struct Map {
+    destination_min: u64,
+    source_min: u64,
+    length: u64,
 }
 
-fn parse_item(item: &str) -> Vec<(Vec<u32>, Vec<u32>)> {
-    println!("{}", item);
+struct Data {
+    seeds: Vec<u64>,
+    seed_to_soil_map: Vec<Map>,
+    soil_to_fertilizer: Vec<Map>,
+    fertilizer_to_water: Vec<Map>,
+    water_to_light: Vec<Map>,
+    light_to_temperature: Vec<Map>,
+    temperature_to_humidity: Vec<Map>,
+    humidity_to_location: Vec<Map>,
+}
+
+fn parse_item(item: &str) -> Vec<Map> {
     return item
         .lines()
         .skip(1)
         .map(|line| {
             let data = line
                 .split(" ")
-                .map(|x| x.parse::<u32>().unwrap())
-                .collect::<Vec<u32>>();
+                .map(|x| x.parse::<u64>().unwrap())
+                .collect::<Vec<u64>>();
 
-            let destination = (data[0]..=data[0] + data[2]).collect();
-            let source = (data[1]..=data[1] + data[2]).collect();
-
-            return (destination, source);
+            return Map {
+                destination_min: data[0],
+                source_min: data[1],
+                length: data[2],
+            };
         })
         .collect();
 }
@@ -37,8 +42,8 @@ fn get_data(input: &String) -> Data {
         .nth(1)
         .unwrap()
         .split(" ")
-        .map(|x| x.parse::<u32>().unwrap())
-        .collect::<Vec<u32>>();
+        .map(|x| x.parse::<u64>().unwrap())
+        .collect::<Vec<u64>>();
 
     return Data {
         seeds,
@@ -52,25 +57,23 @@ fn get_data(input: &String) -> Data {
     };
 }
 
-fn map_to_next(current: Vec<u32>, next: &Vec<(Vec<u32>, Vec<u32>)>) -> Vec<u32> {
+fn map_to_next(current: Vec<u64>, next: &Vec<Map>) -> Vec<u64> {
     return current
         .iter()
         .map(|item| {
-            for (destination, source) in next {
-                if source.contains(item) {
-                    let idx = source.iter().position(|x| x == item).unwrap();
-                    return destination[idx];
+            for map in next {
+                if map.source_min <= *item && *item < map.source_min + map.length {
+                    return map.destination_min + (*item - map.source_min);
                 }
             }
 
             return *item;
         })
-        .collect::<Vec<u32>>();
+        .collect();
 }
 
 fn first_part(input: &String) {
     let data = get_data(input);
-    println!("{:?}", data);
 
     let soils = map_to_next(data.seeds, &data.seed_to_soil_map);
     let fertilizers = map_to_next(soils, &data.soil_to_fertilizer);
@@ -80,7 +83,7 @@ fn first_part(input: &String) {
     let humidities = map_to_next(temperatures, &data.temperature_to_humidity);
     let locations = map_to_next(humidities, &data.humidity_to_location);
 
-    println!("{}", locations.iter().min().unwrap());
+    println!("First part: {}", locations.iter().min().unwrap());
 }
 
 fn main() {
@@ -89,8 +92,8 @@ fn main() {
     first_part(&input);
     // second_part(&input);
 
-    // println!("\ninput.txt:");
-    // let input = std::fs::read_to_string("./05/input.txt").unwrap();
-    // first_part(&input);
+    println!("\ninput.txt:");
+    let input = std::fs::read_to_string("./05/input.txt").unwrap();
+    first_part(&input);
     // second_part(&input);
 }
