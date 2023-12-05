@@ -26,7 +26,7 @@ fn map_to_next(current: Vec<u64>, next: Vec<Map>) -> Vec<u64> {
         .map(|item| {
             for map in next.iter() {
                 if map.source_min <= *item && *item < map.source_min + map.length {
-                    return map.destination_min + (*item - map.source_min);
+                    return map.destination_min + (item - map.source_min);
                 }
             }
 
