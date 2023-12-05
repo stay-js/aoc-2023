@@ -5,47 +5,41 @@ struct Number {
     end: usize,
 }
 
-fn save_and_reset(
-    numbers: &mut Vec<Number>,
-    current: &mut String,
-    y: usize,
-    start: &mut i32,
-    end: &mut i32,
-) {
-    numbers.push(Number {
-        value: current.parse::<u32>().unwrap(),
-        y,
-        start: *start as usize,
-        end: *end as usize,
-    });
-
-    *start = -1;
-    *end = -1;
-    *current = String::new();
+impl Number {
+    fn new(value: u32, y: usize, start: usize, end: usize) -> Self {
+        Self {
+            value,
+            y,
+            start,
+            end,
+        }
+    }
 }
 
 fn get_numbers(grid: &Vec<Vec<char>>) -> Vec<Number> {
     let mut numbers: Vec<Number> = Vec::new();
 
     let mut current = String::new();
-    let mut start: i32 = -1;
-    let mut end: i32 = -1;
+    let mut start: usize = 0;
+    let mut end: usize = 0;
 
     for (y, row) in grid.iter().enumerate() {
         for (x, ch) in row.iter().enumerate() {
             if ch.is_digit(10) {
-                if start == -1 {
-                    start = x as i32;
+                if current.is_empty() {
+                    start = x;
                 }
 
                 current.push(*ch);
-                end = x as i32;
+                end = x;
 
                 if x == row.len() - 1 {
-                    save_and_reset(&mut numbers, &mut current, y, &mut start, &mut end);
+                    numbers.push(Number::new(current.parse().unwrap(), y, start, end));
+                    current.clear();
                 }
-            } else if start != -1 {
-                save_and_reset(&mut numbers, &mut current, y, &mut start, &mut end);
+            } else if !current.is_empty() {
+                numbers.push(Number::new(current.parse().unwrap(), y, start, end));
+                current.clear();
             }
         }
     }
