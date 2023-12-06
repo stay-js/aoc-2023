@@ -79,12 +79,12 @@ fn second_part_bf(input: &String) {
 
 fn main() {
     println!("demo-input.txt:");
-    let input = std::fs::read_to_string("./05/demo-input.txt").unwrap();
+    let input = std::fs::read_to_string("inputs/05/demo-input.txt").unwrap();
     first_part(&input);
     second_part_bf(&input);
 
     println!("\ninput.txt:");
-    let input = std::fs::read_to_string("./05/input.txt").unwrap();
+    let input = std::fs::read_to_string("inputs/05/input.txt").unwrap();
     first_part(&input);
     second_part_bf(&input);
 }
