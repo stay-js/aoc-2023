@@ -3,8 +3,8 @@ const VALID_NUMBERS: [&str; 9] = [
 ];
 
 fn match_string_to_number(input: String) -> Option<u32> {
-    for i in 0..VALID_NUMBERS.len() {
-        if input.contains(VALID_NUMBERS[i]) {
+    for (i, number) in VALID_NUMBERS.iter().enumerate() {
+        if input.contains(number) {
             return Some(i as u32 + 1);
         }
     }
