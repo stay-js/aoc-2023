@@ -1,3 +1,7 @@
+// part 2 heavily inspired by https://github.com/Vzaa/aoc2023/blob/main/day05/src/main.rs
+
+type Range = (u64, u64);
+
 struct Map {
     destination_min: u64,
     source_min: u64,
@@ -49,17 +53,55 @@ fn first_part(input: &String) {
         .map(|x| x.parse().unwrap())
         .collect();
 
-    for i in 1..data.len() {
-        current = map_to_next(current, parse_item(data[i]));
+    for item in data.iter().skip(1) {
+        current = map_to_next(current, parse_item(item));
     }
 
     println!("First part: {}", current.iter().min().unwrap());
 }
 
-fn second_part_bf(input: &String) {
+fn intersect_range(target: Range, source: Range) -> (Option<Range>, Vec<Range>) {
+    let (target_min, target_len) = target;
+    let target_max = target_min + target_len - 1;
+
+    let (source_min, source_len) = source;
+    let source_max = source_min + source_len - 1;
+
+    if source_min >= target_min && source_min <= target_max {
+        if source_max >= target_min && source_max <= target_max {
+            return (Some(source), Vec::new());
+        }
+
+        return (
+            Some((source_min, target_len - (source_min - target_min))),
+            vec![(target_min + target_len, (source_max) - (target_max))],
+        );
+    }
+
+    if source_max >= target_min && source_max <= target_max {
+        return (
+            Some((target_min, source_max - target_min + 1)),
+            vec![(source_min, target_min - source_min)],
+        );
+    }
+
+    if source_min < target_min && source_max > target_max {
+        return (
+            Some(target),
+            vec![
+                (source_min, target_min - source_min),
+                (target_min + target_len, source_max - target_max),
+            ],
+        );
+    }
+
+    return (None, vec![source]);
+}
+
+fn second_part(input: &String) {
     let data: Vec<&str> = input.split("\n\n").collect();
 
-    let mut current = data[0]
+    let mut current: Vec<Range> = data[0]
         .split(": ")
         .nth(1)
         .unwrap()
@@ -67,16 +109,38 @@ fn second_part_bf(input: &String) {
         .map(|x| x.parse().unwrap())
         .collect::<Vec<u64>>()
         .chunks(2)
-        .flat_map(|x| x[0]..x[0] + x[1])
+        .map(|item| (item[0], item[1]))
         .collect();
 
-    for i in 1..data.len() {
-        current = map_to_next(current, parse_item(data[i]));
+    for item in data.iter().skip(1) {
+        let stage = parse_item(item);
+        let mut next = Vec::new();
+
+        for map in stage {
+            let mut remain = Vec::new();
+
+            while let Some(item) = current.pop() {
+                let (intersection, extra) = intersect_range((map.source_min, map.length), item);
+
+                if let Some((intersecting_min, intersecting_max)) = intersection {
+                    next.push((
+                        map.destination_min + (intersecting_min - map.source_min),
+                        intersecting_max,
+                    ));
+                }
+
+                remain.extend(extra);
+            }
+
+            current.extend(remain);
+        }
+
+        current.extend(next);
     }
 
     println!(
-        "Second part (brute force): {}",
-        current.iter().min().unwrap()
+        "Second part: {}",
+        current.iter().map(|(min, _)| min).min().unwrap()
     );
 }
 
@@ -84,10 +148,10 @@ fn main() {
     println!("demo-input.txt:");
     let input = std::fs::read_to_string("inputs/05/demo-input.txt").unwrap();
     first_part(&input);
-    second_part_bf(&input);
+    second_part(&input);
 
     println!("\ninput.txt:");
     let input = std::fs::read_to_string("inputs/05/input.txt").unwrap();
     first_part(&input);
-    second_part_bf(&input);
+    second_part(&input);
 }
