@@ -16,7 +16,13 @@ fn first_part(input: &String) {
     for line in input.lines() {
         let line_as_vec: Vec<&str> = line.split(": ").collect();
 
-        let id: u16 = line_as_vec[0].split(" ").nth(1).unwrap().parse().unwrap();
+        let id: u16 = line_as_vec[0]
+            .split_whitespace()
+            .nth(1)
+            .unwrap()
+            .parse()
+            .unwrap();
+
         let shows: Vec<&str> = line_as_vec[1].split("; ").collect();
 
         let mut is_possible = true;
@@ -25,7 +31,7 @@ fn first_part(input: &String) {
             let colors: Vec<&str> = show.split(", ").collect();
 
             for color in colors {
-                let color_as_vec: Vec<&str> = color.split(" ").collect();
+                let color_as_vec: Vec<&str> = color.split_whitespace().collect();
 
                 match color_as_vec[1] {
                     "red" => {
@@ -69,10 +75,10 @@ fn second_part(input: &String) {
         let shows: Vec<&str> = line.split(": ").nth(1).unwrap().split("; ").collect();
 
         for show in shows {
-            let colors = show.split(", ").collect::<Vec<&str>>();
+            let colors: Vec<&str> = show.split(", ").collect();
 
             for color in colors {
-                let color_as_vec: Vec<&str> = color.split(" ").collect();
+                let color_as_vec: Vec<&str> = color.split_whitespace().collect();
 
                 match color_as_vec[1] {
                     "red" => {

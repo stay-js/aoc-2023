@@ -48,17 +48,14 @@ fn get_numbers(grid: &Vec<Vec<char>>) -> Vec<Number> {
 }
 
 fn first_part(input: &String) {
-    let grid = input
-        .lines()
-        .map(|line| line.chars().collect::<Vec<char>>())
-        .collect::<Vec<Vec<char>>>();
+    let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
 
     let h = grid.len();
     let w = grid[0].len();
 
     let numbers = get_numbers(&grid);
 
-    let parts = numbers
+    let parts: Vec<&Number> = numbers
         .iter()
         .filter(|num| {
             if num.start != 0
@@ -103,7 +100,7 @@ fn first_part(input: &String) {
 
             return false;
         })
-        .collect::<Vec<&Number>>();
+        .collect();
 
     println!(
         "First part: {}",
@@ -112,10 +109,7 @@ fn first_part(input: &String) {
 }
 
 fn second_part(input: &String) {
-    let grid = input
-        .lines()
-        .map(|line| line.chars().collect::<Vec<char>>())
-        .collect::<Vec<Vec<char>>>();
+    let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
 
     let numbers = get_numbers(&grid);
 

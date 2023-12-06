@@ -4,15 +4,13 @@ fn parse_line(line: &str) -> (HashSet<u32>, HashSet<u32>) {
     let data: Vec<&str> = line.split(": ").nth(1).unwrap().split(" | ").collect();
 
     let winning_numbers: HashSet<u32> = data[0]
-        .split(" ")
-        .filter(|&x| x != "")
-        .map(|x| x.parse::<u32>().unwrap())
+        .split_whitespace()
+        .map(|x| x.parse().unwrap())
         .collect();
 
     let numbers: HashSet<u32> = data[1]
-        .split(" ")
-        .filter(|&x| x != "")
-        .map(|x| x.parse::<u32>().unwrap())
+        .split_whitespace()
+        .map(|x| x.parse().unwrap())
         .collect();
 
     return (winning_numbers, numbers);

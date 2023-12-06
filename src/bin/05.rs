@@ -9,7 +9,10 @@ fn parse_item(item: &str) -> Vec<Map> {
         .lines()
         .skip(1)
         .map(|line| {
-            let data: Vec<u64> = line.split(" ").map(|x| x.parse::<u64>().unwrap()).collect();
+            let data: Vec<u64> = line
+                .split_whitespace()
+                .map(|x| x.parse().unwrap())
+                .collect();
 
             return Map {
                 destination_min: data[0],
@@ -42,8 +45,8 @@ fn first_part(input: &String) {
         .split(": ")
         .nth(1)
         .unwrap()
-        .split(" ")
-        .map(|x| x.parse::<u64>().unwrap())
+        .split_whitespace()
+        .map(|x| x.parse().unwrap())
         .collect();
 
     for i in 1..data.len() {
@@ -60,8 +63,8 @@ fn second_part_bf(input: &String) {
         .split(": ")
         .nth(1)
         .unwrap()
-        .split(" ")
-        .map(|x| x.parse::<u64>().unwrap())
+        .split_whitespace()
+        .map(|x| x.parse().unwrap())
         .collect::<Vec<u64>>()
         .chunks(2)
         .flat_map(|x| x[0]..x[0] + x[1])
