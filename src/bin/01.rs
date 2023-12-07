@@ -12,66 +12,59 @@ fn match_string_to_number(input: String) -> Option<u32> {
     return None;
 }
 
-fn find_left_most(input: &Vec<char>, only_digit: bool) -> Option<u32> {
+fn find_left_most(input: &Vec<char>, only_digit: bool) -> u32 {
     for i in 0..input.len() {
         if let Some(number) = input[i].to_digit(10) {
-            return Some(number);
+            return number;
         }
 
         if !only_digit {
             if let Some(number) = match_string_to_number(input[..=i].iter().collect()) {
-                return Some(number);
+                return number;
             }
         }
     }
 
-    return None;
+    panic!("No left most number found!");
 }
 
-fn find_right_most(input: &Vec<char>, only_digit: bool) -> Option<u32> {
+fn find_right_most(input: &Vec<char>, only_digit: bool) -> u32 {
     for i in (0..input.len()).rev() {
         if let Some(number) = input[i].to_digit(10) {
-            return Some(number);
+            return number;
         }
 
         if !only_digit {
             if let Some(number) = match_string_to_number(input[i..].iter().collect()) {
-                return Some(number);
+                return number;
             }
         }
     }
 
-    return None;
+    panic!("No right most number found!");
+}
+
+fn calculate_total(input: &String, only_digit: bool) -> u32 {
+    let mut total = 0;
+
+    for item in input.lines() {
+        let chars: Vec<char> = item.chars().collect();
+
+        let left_most = find_left_most(&chars, only_digit);
+        let right_most = find_right_most(&chars, only_digit);
+
+        total += left_most * 10 + right_most;
+    }
+
+    return total;
 }
 
 fn first_part(input: &String) {
-    let mut total = 0;
-
-    for item in input.lines() {
-        let chars: Vec<char> = item.chars().collect();
-
-        let left_most = find_left_most(&chars, true).unwrap();
-        let right_most = find_right_most(&chars, true).unwrap();
-
-        total += left_most * 10 + right_most;
-    }
-
-    println!("First part: {}", total);
+    println!("First part: {}", calculate_total(input, true));
 }
 
 fn second_part(input: &String) {
-    let mut total = 0;
-
-    for item in input.lines() {
-        let chars: Vec<char> = item.chars().collect();
-
-        let left_most = find_left_most(&chars, false).unwrap();
-        let right_most = find_right_most(&chars, false).unwrap();
-
-        total += left_most * 10 + right_most;
-    }
-
-    println!("Second part: {}", total);
+    println!("Second part: {}", calculate_total(input, false));
 }
 
 fn main() {

@@ -49,7 +49,7 @@ fn first_part(input: &String) {
                             is_possible = false;
                         }
                     }
-                    _ => panic!("Invalid color input"),
+                    _ => panic!("Invalid color input!"),
                 }
             }
         }
@@ -102,7 +102,7 @@ fn second_part(input: &String) {
                             config.blue = amount;
                         }
                     }
-                    _ => panic!("Invalid color input"),
+                    _ => panic!("Invalid color input!"),
                 }
             }
         }
