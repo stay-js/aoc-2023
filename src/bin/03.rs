@@ -1,3 +1,5 @@
+type Grid = Vec<Vec<char>>;
+
 struct Number {
     value: u32,
     y: usize,
@@ -16,7 +18,7 @@ impl Number {
     }
 }
 
-fn get_numbers(grid: &Vec<Vec<char>>) -> Vec<Number> {
+fn get_numbers(grid: &Grid) -> Vec<Number> {
     let mut numbers: Vec<Number> = Vec::new();
 
     let mut current = String::new();
@@ -48,7 +50,7 @@ fn get_numbers(grid: &Vec<Vec<char>>) -> Vec<Number> {
 }
 
 fn first_part(input: &String) {
-    let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let grid: Grid = input.lines().map(|line| line.chars().collect()).collect();
 
     let h = grid.len();
     let w = grid[0].len();
@@ -109,7 +111,7 @@ fn first_part(input: &String) {
 }
 
 fn second_part(input: &String) {
-    let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let grid: Grid = input.lines().map(|line| line.chars().collect()).collect();
 
     let numbers = get_numbers(&grid);
 
