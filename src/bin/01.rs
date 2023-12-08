@@ -74,7 +74,7 @@ fn main() {
     first_part(&demo_input);
 
     println!("\ndemo-input-2:");
-    second_part(&aoc::get_input_2());
+    second_part(&aoc::get_input_by_name("demo-input-2.txt"));
 
     println!("\ninput:");
     first_part(&input);

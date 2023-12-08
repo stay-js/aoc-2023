@@ -14,10 +14,11 @@ pub fn get_input() -> (String, String) {
     return (demo_input, input);
 }
 
-pub fn get_input_2() -> String {
+pub fn get_input_by_name(file_name: &str) -> String {
     return std::fs::read_to_string(format!(
-        "inputs/{}/demo-input-2.txt",
+        "inputs/{}/{}",
         std::env::args().next().unwrap().split("/").last().unwrap(),
+        file_name,
     ))
     .unwrap();
 }
