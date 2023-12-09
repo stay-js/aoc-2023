@@ -1,4 +1,4 @@
-fn first_part(input: &String) {
+fn calculate_total(input: &String, future: bool) -> i64 {
     let sequences: Vec<Vec<i64>> = input
         .lines()
         .map(|line| {
@@ -31,17 +31,36 @@ fn first_part(input: &String) {
             differences.push(diffs);
         }
 
-        for i in (0..differences.len() - 1).rev() {
-            let last_diff = *differences[i].last().unwrap();
-            let current_diff = *differences[i + 1].last().unwrap();
+        if future {
+            for i in (0..differences.len() - 1).rev() {
+                let last_diff = *differences[i].last().unwrap();
+                let current_diff = *differences[i + 1].last().unwrap();
 
-            differences[i].push(last_diff + current_diff);
+                differences[i].push(last_diff + current_diff);
+            }
+
+            total += differences.first().unwrap().last().unwrap();
+        } else {
+            for i in (0..differences.len() - 1).rev() {
+                let last_diff = *differences[i].first().unwrap();
+                let current_diff = *differences[i + 1].first().unwrap();
+
+                differences[i].insert(0, last_diff - current_diff);
+            }
+
+            total += differences.first().unwrap().first().unwrap();
         }
-
-        total += differences.first().unwrap().last().unwrap();
     }
 
-    println!("First part: {}", total);
+    return total;
+}
+
+fn first_part(input: &String) {
+    println!("First part: {}", calculate_total(input, true));
+}
+
+fn second_part(input: &String) {
+    println!("Second part: {}", calculate_total(input, false));
 }
 
 fn main() {
@@ -49,9 +68,9 @@ fn main() {
 
     println!("demo-input:");
     first_part(&demo_input);
-    // second_part(&demo_input);
+    second_part(&demo_input);
 
     println!("\ninput:");
     first_part(&input);
-    // second_part(&input);
+    second_part(&input);
 }
