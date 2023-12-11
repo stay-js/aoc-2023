@@ -3,12 +3,13 @@ struct Point {
     y: usize,
 }
 
-fn first_part(input: &String) {
-    let mut grid: Vec<Vec<char>> = input
+fn calculate_total(input: &String, expansion_ratio: usize) -> usize {
+    let grid: Vec<Vec<char>> = input
         .lines()
         .map(|line| line.chars().collect::<Vec<char>>())
         .collect();
 
+    let h = grid.len();
     let w = grid[0].len();
 
     let mut empty_rows: Vec<usize> = Vec::new();
@@ -18,13 +19,6 @@ fn first_part(input: &String) {
             empty_rows.push(y);
         }
     }
-
-    for (i, y) in empty_rows.iter().enumerate() {
-        grid.insert(y + i, (0..w).map(|_| '.').collect());
-    }
-
-    let h = grid.len();
-    let w = grid[0].len();
 
     let mut empty_cols: Vec<usize> = Vec::new();
 
@@ -37,12 +31,6 @@ fn first_part(input: &String) {
 
         if y >= h {
             empty_cols.push(x);
-        }
-    }
-
-    for row in grid.iter_mut() {
-        for (i, x) in empty_cols.iter().enumerate() {
-            row.insert(x + i, '.');
         }
     }
 
@@ -60,11 +48,28 @@ fn first_part(input: &String) {
 
     for a in &galaxies {
         for b in &galaxies {
-            total += i32::abs(a.x as i32 - b.x as i32) + i32::abs(a.y as i32 - b.y as i32);
+            let x_min = usize::min(a.x, b.x);
+            let x_max = usize::max(a.x, b.x);
+            let y_min = usize::min(a.y, b.y);
+            let y_max = usize::max(a.y, b.y);
+
+            let x_expansion = (x_min..=x_max).filter(|x| empty_cols.contains(&x)).count();
+            let y_expansion = (y_min..=y_max).filter(|y| empty_rows.contains(&y)).count();
+
+            total += (x_max - x_min + x_expansion * (expansion_ratio - 1))
+                + (y_max - y_min + y_expansion * (expansion_ratio - 1));
         }
     }
 
-    println!("First part: {}", total / 2);
+    return total / 2;
+}
+
+fn first_part(input: &String) {
+    println!("First part: {}", calculate_total(input, 2));
+}
+
+fn second_part(input: &String) {
+    println!("Second part: {}", calculate_total(input, 1000000));
 }
 
 fn main() {
@@ -72,9 +77,8 @@ fn main() {
 
     println!("demo-input:");
     first_part(&demo_input);
-    // second_part(&demo_input);
 
     println!("\ninput:");
     first_part(&input);
-    // second_part(&input);
+    second_part(&input);
 }
