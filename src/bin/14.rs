@@ -8,6 +8,7 @@ fn first_part(input: &String) {
         for x in 0..w {
             if grid[y][x] == 'O' {
                 let mut i = y;
+
                 while i > 0 && grid[i - 1][x] == '.' {
                     i -= 1;
                 }
