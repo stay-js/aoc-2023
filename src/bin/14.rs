@@ -1,121 +1,129 @@
-fn tilt_north(grid: &mut Vec<Vec<char>>) {
+type Grid = Vec<Vec<char>>;
+
+fn tilt_north(grid: &mut Grid) {
     let h = grid.len();
     let w = grid[0].len();
 
     for y in 1..h {
         for x in 0..w {
-            if grid[y][x] == 'O' {
-                let mut i = y;
-
-                while i > 0 && grid[i - 1][x] == '.' {
-                    i -= 1;
-                }
-
-                grid[y][x] = '.';
-                grid[i][x] = 'O';
+            if grid[y][x] != 'O' {
+                continue;
             }
+
+            let mut i = y;
+
+            while i > 0 && grid[i - 1][x] == '.' {
+                i -= 1;
+            }
+
+            grid[y][x] = '.';
+            grid[i][x] = 'O';
         }
     }
 }
 
-fn tilt_south(grid: &mut Vec<Vec<char>>) {
+fn tilt_south(grid: &mut Grid) {
     let h = grid.len();
     let w = grid[0].len();
 
     for y in (0..h - 1).rev() {
         for x in 0..w {
-            if grid[y][x] == 'O' {
-                let mut i = y;
-
-                while i < h - 1 && grid[i + 1][x] == '.' {
-                    i += 1;
-                }
-
-                grid[y][x] = '.';
-                grid[i][x] = 'O';
+            if grid[y][x] != 'O' {
+                continue;
             }
+
+            let mut i = y;
+
+            while i < h - 1 && grid[i + 1][x] == '.' {
+                i += 1;
+            }
+
+            grid[y][x] = '.';
+            grid[i][x] = 'O';
         }
     }
 }
 
-fn tilt_west(grid: &mut Vec<Vec<char>>) {
+fn tilt_west(grid: &mut Grid) {
     let w = grid[0].len();
 
     for row in grid.iter_mut() {
         for x in 0..w {
-            if row[x] == 'O' {
-                let mut i = x;
-
-                while i > 0 && row[i - 1] == '.' {
-                    i -= 1;
-                }
-
-                row[x] = '.';
-                row[i] = 'O';
+            if row[x] != 'O' {
+                continue;
             }
+
+            let mut i = x;
+
+            while i > 0 && row[i - 1] == '.' {
+                i -= 1;
+            }
+
+            row[x] = '.';
+            row[i] = 'O';
         }
     }
 }
 
-fn tilt_east(grid: &mut Vec<Vec<char>>) {
+fn tilt_east(grid: &mut Grid) {
     let w = grid[0].len();
 
     for row in grid.iter_mut() {
         for x in (0..w).rev() {
-            if row[x] == 'O' {
-                let mut i = x;
-
-                while i < w - 1 && row[i + 1] == '.' {
-                    i += 1;
-                }
-
-                row[x] = '.';
-                row[i] = 'O';
+            if row[x] != 'O' {
+                continue;
             }
+
+            let mut i = x;
+
+            while i < w - 1 && row[i + 1] == '.' {
+                i += 1;
+            }
+
+            row[x] = '.';
+            row[i] = 'O';
         }
     }
+}
+
+fn calculate_total(grid: &Grid) -> usize {
+    return grid.iter().enumerate().fold(0, |acc, (y, row)| {
+        acc + row.iter().filter(|ch| ch == &&'O').count() * (grid.len() - y)
+    });
 }
 
 fn first_part(input: &String) {
-    let mut grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let mut grid: Grid = input.lines().map(|line| line.chars().collect()).collect();
 
     tilt_north(&mut grid);
 
-    let mut total = 0;
-
-    for (y, row) in grid.iter().enumerate() {
-        for ch in row {
-            if ch == &'O' {
-                total += grid.len() - y;
-            }
-        }
-    }
-
-    println!("First part: {}", total);
+    println!("First part: {}", calculate_total(&grid));
 }
 
 fn second_part(input: &String) {
-    let original_grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
-    let mut grid: Vec<Vec<char>> = original_grid.clone();
+    let mut grid: Grid = input.lines().map(|line| line.chars().collect()).collect();
+    let mut seen_states: Vec<Grid> = Vec::new();
 
-    for _ in 0..1_000_000_000 {
+    loop {
         tilt_north(&mut grid);
         tilt_west(&mut grid);
         tilt_south(&mut grid);
         tilt_east(&mut grid);
-    }
 
-    let mut total = 0;
-
-    for (y, row) in grid.iter().enumerate() {
-        for ch in row {
-            if ch == &'O' {
-                total += grid.len() - y;
-            }
+        if seen_states.contains(&grid) {
+            break;
         }
+
+        seen_states.push(grid.clone());
     }
 
-    println!("Second part: {}", total);
+    let cycle_start = seen_states.iter().position(|g| g == &grid).unwrap();
+    let cycle_length = seen_states.len() - cycle_start;
+    let remaining_cycles = (1_000_000_000 - cycle_start) % cycle_length;
+
+    let result_grid = &seen_states[cycle_start + remaining_cycles];
+
+    println!("Second part: {}", calculate_total(result_grid));
 }
 
 fn main() {
