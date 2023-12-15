@@ -12,51 +12,44 @@ fn match_string_to_number(input: String) -> Option<u32> {
     return None;
 }
 
-fn find_left_most(input: &Vec<char>, only_digit: bool) -> u32 {
-    for i in 0..input.len() {
+fn find_most(input: &Vec<char>, only_digit: bool, left: bool) -> u32 {
+    let range: Vec<usize> = match left {
+        true => (0..input.len()).collect(),
+        false => (0..input.len()).rev().collect(),
+    };
+
+    for i in range {
         if let Some(number) = input[i].to_digit(10) {
             return number;
         }
 
         if !only_digit {
-            if let Some(number) = match_string_to_number(input[..=i].iter().collect()) {
+            let sub_string: String = match left {
+                true => input[..=i].iter().collect(),
+                false => input[i..].iter().collect(),
+            };
+
+            if let Some(number) = match_string_to_number(sub_string) {
                 return number;
             }
         }
     }
 
-    panic!("No left most number found!");
-}
-
-fn find_right_most(input: &Vec<char>, only_digit: bool) -> u32 {
-    for i in (0..input.len()).rev() {
-        if let Some(number) = input[i].to_digit(10) {
-            return number;
-        }
-
-        if !only_digit {
-            if let Some(number) = match_string_to_number(input[i..].iter().collect()) {
-                return number;
-            }
-        }
-    }
-
-    panic!("No right most number found!");
+    panic!(
+        "No {} most number found!",
+        if left { "left" } else { "right" }
+    );
 }
 
 fn calculate_total(input: &String, only_digit: bool) -> u32 {
-    let mut total = 0;
-
-    for item in input.lines() {
+    return input.lines().fold(0, |acc, item| {
         let chars: Vec<char> = item.chars().collect();
 
-        let left_most = find_left_most(&chars, only_digit);
-        let right_most = find_right_most(&chars, only_digit);
+        let left_most = find_most(&chars, only_digit, true);
+        let right_most = find_most(&chars, only_digit, false);
 
-        total += left_most * 10 + right_most;
-    }
-
-    return total;
+        return acc + left_most * 10 + right_most;
+    });
 }
 
 fn first_part(input: &String) {
