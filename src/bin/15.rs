@@ -4,15 +4,9 @@ struct Lens {
 }
 
 fn calculate_hash(input: &str) -> u32 {
-    let mut current = 0;
-
-    for ch in input.chars() {
-        current += ch as u32;
-        current *= 17;
-        current %= 256;
-    }
-
-    return current;
+    return input
+        .chars()
+        .fold(0, |acc, ch| ((acc + ch as u32) * 17) % 256);
 }
 
 fn first_part(input: &String) {
@@ -24,11 +18,9 @@ fn first_part(input: &String) {
 }
 
 fn second_part(input: &String) {
-    let data: Vec<&str> = input.split(",").collect();
+    let mut boxes: Vec<Vec<Lens>> = (0..256).map(|_| Vec::new()).collect();
 
-    let mut boxes = (0..256).map(|_| Vec::new()).collect::<Vec<Vec<Lens>>>();
-
-    for item in data {
+    for item in input.split(",") {
         let label: String = item.chars().filter(|ch| ch.is_alphabetic()).collect();
         let current_box = &mut boxes[calculate_hash(label.as_str()) as usize];
 
@@ -37,12 +29,13 @@ fn second_part(input: &String) {
 
             if let Some(lens_id) = current_box.iter().position(|lens| lens.label == label) {
                 current_box[lens_id].focusing_power = focusing_power;
-            } else {
-                current_box.push(Lens {
-                    label,
-                    focusing_power,
-                });
+                continue;
             }
+
+            current_box.push(Lens {
+                label,
+                focusing_power,
+            });
         } else if let Some(lens_id) = current_box.iter().position(|lens| lens.label == label) {
             current_box.remove(lens_id);
         }
