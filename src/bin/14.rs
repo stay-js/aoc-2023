@@ -100,30 +100,28 @@ fn first_part(input: &String) {
     println!("First part: {}", calculate_total(&grid));
 }
 
+const ITERATIONS: usize = 1_000_000_000;
+
 fn second_part(input: &String) {
     let mut grid: Grid = input.lines().map(|line| line.chars().collect()).collect();
     let mut seen_states: Vec<Grid> = Vec::new();
 
-    loop {
+    for i in 0..ITERATIONS {
         tilt_north(&mut grid);
         tilt_west(&mut grid);
         tilt_south(&mut grid);
         tilt_east(&mut grid);
 
-        if seen_states.contains(&grid) {
-            break;
+        if let Some(seen_at) = seen_states.iter().rposition(|g| g == &grid) {
+            if (ITERATIONS - i - 1) % (i - seen_at) == 0 {
+                break;
+            }
         }
 
         seen_states.push(grid.clone());
     }
 
-    let cycle_start = seen_states.iter().position(|g| g == &grid).unwrap();
-    let cycle_length = seen_states.len() - cycle_start;
-    let remaining_cycles = (1_000_000_000 - cycle_start) % cycle_length;
-
-    let result_grid = &seen_states[cycle_start + remaining_cycles];
-
-    println!("Second part: {}", calculate_total(result_grid));
+    println!("Second part: {}", calculate_total(&grid));
 }
 
 fn main() {
