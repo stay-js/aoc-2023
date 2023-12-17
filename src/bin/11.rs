@@ -14,8 +14,8 @@ fn calculate_total(input: &String, expansion: usize) -> usize {
         .map(|line| line.chars().collect::<Vec<char>>())
         .collect();
 
-    let h = grid.len();
-    let w = grid[0].len();
+    let height = grid.len();
+    let width = grid[0].len();
 
     let mut empty_rows: Vec<usize> = Vec::new();
 
@@ -27,14 +27,14 @@ fn calculate_total(input: &String, expansion: usize) -> usize {
 
     let mut empty_cols: Vec<usize> = Vec::new();
 
-    for x in 0..w {
+    for x in 0..width {
         let mut y = 0;
 
-        while y < h && grid[y][x] == '.' {
+        while y < height && grid[y][x] == '.' {
             y += 1;
         }
 
-        if y >= h {
+        if y >= height {
             empty_cols.push(x);
         }
     }
@@ -82,7 +82,7 @@ fn first_part(input: &String) {
 }
 
 fn second_part(input: &String) {
-    println!("Second part: {}", calculate_total(input, 1000000));
+    println!("Second part: {}", calculate_total(input, 1_000_000));
 }
 
 fn main() {

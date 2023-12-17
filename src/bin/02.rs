@@ -14,16 +14,10 @@ fn first_part(input: &String) {
     let mut total = 0;
 
     for line in input.lines() {
-        let line_as_vec: Vec<&str> = line.split(": ").collect();
+        let data: Vec<&str> = line.split(": ").collect();
 
-        let id: u16 = line_as_vec[0]
-            .split_whitespace()
-            .nth(1)
-            .unwrap()
-            .parse()
-            .unwrap();
-
-        let shows: Vec<&str> = line_as_vec[1].split("; ").collect();
+        let id: u16 = data[0].split_whitespace().nth(1).unwrap().parse().unwrap();
+        let shows: Vec<&str> = data[1].split("; ").collect();
 
         let mut is_possible = true;
 

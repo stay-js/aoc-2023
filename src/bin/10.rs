@@ -74,8 +74,8 @@ impl Point {
 fn first_part(input: &String) {
     let grid: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
 
-    let h = grid.len();
-    let w = grid[0].len();
+    let height = grid.len();
+    let width = grid[0].len();
 
     let mut start = Point { x: 0, y: 0 };
 
@@ -99,10 +99,12 @@ fn first_part(input: &String) {
                 current.move_north();
             } else if current.x > 0 && ['-', 'L', 'F'].contains(&grid[current.y][current.x - 1]) {
                 current.move_west();
-            } else if current.y < h - 1 && ['|', 'L', 'J'].contains(&grid[current.y + 1][current.x])
+            } else if current.y < height - 1
+                && ['|', 'L', 'J'].contains(&grid[current.y + 1][current.x])
             {
                 current.move_south();
-            } else if current.x < w - 1 && ['-', 'J', '7'].contains(&grid[current.y][current.x + 1])
+            } else if current.x < width - 1
+                && ['-', 'J', '7'].contains(&grid[current.y][current.x + 1])
             {
                 current.move_east();
             }
@@ -117,7 +119,7 @@ fn first_part(input: &String) {
         match grid[current.y][current.x] {
             '|' => {
                 let north = current.get_north();
-                let south = current.get_south(h);
+                let south = current.get_south(height);
 
                 if steps > 2 && north.is_some() && start == north.unwrap()
                     || south.is_some() && start == south.unwrap()
@@ -132,7 +134,7 @@ fn first_part(input: &String) {
                 }
             }
             '-' => {
-                let east = current.get_east(w);
+                let east = current.get_east(width);
                 let west = current.get_west();
 
                 if steps > 2 && east.is_some() && start == east.unwrap()
@@ -149,7 +151,7 @@ fn first_part(input: &String) {
             }
             'L' => {
                 let north = current.get_north();
-                let east = current.get_east(w);
+                let east = current.get_east(width);
 
                 if steps > 2 && north.is_some() && start == north.unwrap()
                     || east.is_some() && start == east.unwrap()
@@ -180,7 +182,7 @@ fn first_part(input: &String) {
                 }
             }
             '7' => {
-                let south = current.get_south(h);
+                let south = current.get_south(height);
                 let west = current.get_west();
 
                 if steps > 2 && south.is_some() && start == south.unwrap()
@@ -196,8 +198,8 @@ fn first_part(input: &String) {
                 }
             }
             'F' => {
-                let south = current.get_south(h);
-                let east = current.get_east(w);
+                let south = current.get_south(height);
+                let east = current.get_east(width);
 
                 if steps > 2 && south.is_some() && start == south.unwrap()
                     || east.is_some() && start == east.unwrap()

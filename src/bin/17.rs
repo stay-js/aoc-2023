@@ -16,52 +16,63 @@ fn calculate_total_heat_loss(input: &String, min_step: usize, max_step: usize) -
         })
         .collect();
 
-    let h = grid.len();
-    let w = grid[0].len();
+    let height = grid.len();
+    let width = grid[0].len();
 
     let mut seen = HashSet::new();
     let mut pq = BinaryHeap::new();
 
     pq.push(Reverse((0, 0, 0, 0, 0, 0)));
 
-    while let Some(Reverse((heat_loss, y, x, dy, dx, steps))) = pq.pop() {
-        if y == h - 1 && x == w - 1 && steps >= min_step {
+    while let Some(Reverse((heat_loss, y, x, delta_y, delta_x, steps))) = pq.pop() {
+        if y == height - 1 && x == width - 1 && steps >= min_step {
             return heat_loss;
         }
 
-        if seen.contains(&(y, x, dy, dx, steps)) {
+        if seen.contains(&(y, x, delta_y, delta_x, steps)) {
             continue;
         }
 
-        seen.insert((y, x, dy, dx, steps));
+        seen.insert((y, x, delta_y, delta_x, steps));
 
-        if steps < max_step && (dy, dx) != (0, 0) {
-            let ny = y.wrapping_add(dy as usize);
-            let nx = x.wrapping_add(dx as usize);
+        if steps < max_step && (delta_y, delta_x) != (0, 0) {
+            let new_y = y.wrapping_add(delta_y as usize);
+            let new_x = x.wrapping_add(delta_x as usize);
 
-            if ny < h && nx < w {
+            if new_y < height && new_x < width {
                 pq.push(Reverse((
-                    heat_loss + grid[ny][nx],
-                    ny,
-                    nx,
-                    dy,
-                    dx,
+                    heat_loss + grid[new_y][new_x],
+                    new_y,
+                    new_x,
+                    delta_y,
+                    delta_x,
                     steps + 1,
                 )));
             }
         }
 
-        if steps >= min_step || (dy, dx) == (0, 0) {
-            for (ndx, ndy) in &DIRECTIONS {
-                if [(&dy, &dx), (&-dy, &-dx)].contains(&(ndx, ndy)) {
+        if steps >= min_step || (delta_y, delta_x) == (0, 0) {
+            for (new_delta_x, new_delta_y) in &DIRECTIONS {
+                let new_delta_x = *new_delta_x;
+                let new_delta_y = *new_delta_y;
+
+                if [(delta_y, delta_x), (-delta_y, -delta_x)].contains(&(new_delta_x, new_delta_y))
+                {
                     continue;
                 }
 
-                let ny = y.wrapping_add(*ndx as usize);
-                let nx = x.wrapping_add(*ndy as usize);
+                let new_y = y.wrapping_add(new_delta_x as usize);
+                let new_x = x.wrapping_add(new_delta_y as usize);
 
-                if ny < h && nx < w {
-                    pq.push(Reverse((heat_loss + grid[ny][nx], ny, nx, *ndx, *ndy, 1)));
+                if new_y < height && new_x < width {
+                    pq.push(Reverse((
+                        heat_loss + grid[new_y][new_x],
+                        new_y,
+                        new_x,
+                        new_delta_x,
+                        new_delta_y,
+                        1,
+                    )));
                 }
             }
         }

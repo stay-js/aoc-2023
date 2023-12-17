@@ -1,11 +1,9 @@
 type Mirror = Vec<Vec<char>>;
 
 fn check_reflection(mirror: &Mirror) -> Option<usize> {
-    let h = mirror.len();
-
     let mut idx = (0, 0);
 
-    for i in 1..h {
+    for i in 1..mirror.len() {
         if mirror[i - 1] == mirror[i] {
             idx = (i - 1, i);
         }

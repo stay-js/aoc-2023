@@ -12,7 +12,7 @@ fn calculate_total(input: &String, future: bool) -> i64 {
     let mut total = 0;
 
     for sequence in sequences {
-        let mut differences: Vec<Vec<i64>> = vec![sequence];
+        let mut differences = vec![sequence];
 
         while differences
             .iter()

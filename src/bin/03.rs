@@ -52,8 +52,8 @@ fn get_numbers(grid: &Grid) -> Vec<Number> {
 fn first_part(input: &String) {
     let grid: Grid = input.lines().map(|line| line.chars().collect()).collect();
 
-    let h = grid.len();
-    let w = grid[0].len();
+    let height = grid.len();
+    let width = grid[0].len();
 
     let numbers = get_numbers(&grid);
 
@@ -67,7 +67,7 @@ fn first_part(input: &String) {
                 return true;
             }
 
-            if num.end != w - 1
+            if num.end != width - 1
                 && grid[num.y][num.end + 1] != '.'
                 && !grid[num.y][num.end + 1].is_digit(10)
             {
@@ -76,7 +76,11 @@ fn first_part(input: &String) {
 
             if num.y != 0 {
                 let start = if num.start == 0 { 0 } else { num.start - 1 };
-                let end = if num.end == w - 1 { w - 1 } else { num.end + 1 };
+                let end = if num.end == width - 1 {
+                    width - 1
+                } else {
+                    num.end + 1
+                };
 
                 for i in start..=end {
                     let ch = grid[num.y - 1][i];
@@ -87,9 +91,13 @@ fn first_part(input: &String) {
                 }
             }
 
-            if num.y != h - 1 {
+            if num.y != height - 1 {
                 let start = if num.start == 0 { 0 } else { num.start - 1 };
-                let end = if num.end == w - 1 { w - 1 } else { num.end + 1 };
+                let end = if num.end == width - 1 {
+                    width - 1
+                } else {
+                    num.end + 1
+                };
 
                 for i in start..=end {
                     let ch = grid[num.y + 1][i];

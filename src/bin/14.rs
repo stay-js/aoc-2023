@@ -1,11 +1,11 @@
 type Grid = Vec<Vec<char>>;
 
 fn tilt_north(grid: &mut Grid) {
-    let h = grid.len();
-    let w = grid[0].len();
+    let height = grid.len();
+    let width = grid[0].len();
 
-    for y in 1..h {
-        for x in 0..w {
+    for y in 1..height {
+        for x in 0..width {
             if grid[y][x] != 'O' {
                 continue;
             }
@@ -23,18 +23,18 @@ fn tilt_north(grid: &mut Grid) {
 }
 
 fn tilt_south(grid: &mut Grid) {
-    let h = grid.len();
-    let w = grid[0].len();
+    let height = grid.len();
+    let width = grid[0].len();
 
-    for y in (0..h - 1).rev() {
-        for x in 0..w {
+    for y in (0..height - 1).rev() {
+        for x in 0..width {
             if grid[y][x] != 'O' {
                 continue;
             }
 
             let mut i = y;
 
-            while i < h - 1 && grid[i + 1][x] == '.' {
+            while i < height - 1 && grid[i + 1][x] == '.' {
                 i += 1;
             }
 
@@ -45,10 +45,10 @@ fn tilt_south(grid: &mut Grid) {
 }
 
 fn tilt_west(grid: &mut Grid) {
-    let w = grid[0].len();
+    let width = grid[0].len();
 
     for row in grid.iter_mut() {
-        for x in 0..w {
+        for x in 0..width {
             if row[x] != 'O' {
                 continue;
             }
@@ -66,17 +66,17 @@ fn tilt_west(grid: &mut Grid) {
 }
 
 fn tilt_east(grid: &mut Grid) {
-    let w = grid[0].len();
+    let width = grid[0].len();
 
     for row in grid.iter_mut() {
-        for x in (0..w).rev() {
+        for x in (0..width).rev() {
             if row[x] != 'O' {
                 continue;
             }
 
             let mut i = x;
 
-            while i < w - 1 && row[i + 1] == '.' {
+            while i < width - 1 && row[i + 1] == '.' {
                 i += 1;
             }
 
