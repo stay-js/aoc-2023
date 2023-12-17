@@ -1,11 +1,5 @@
 use std::collections::HashSet;
 
-#[derive(PartialEq, Eq, Hash)]
-struct Point {
-    x: usize,
-    y: usize,
-}
-
 fn calculate_total(input: &String, expansion: usize) -> usize {
     let expansion = expansion - 1;
 
@@ -39,19 +33,19 @@ fn calculate_total(input: &String, expansion: usize) -> usize {
         }
     }
 
-    let mut galaxies: Vec<Point> = Vec::new();
+    let mut galaxies: Vec<(usize, usize)> = Vec::new();
 
     for (y, row) in grid.iter().enumerate() {
         for (x, &c) in row.iter().enumerate() {
             if c == '#' {
-                galaxies.push(Point { x, y });
+                galaxies.push((x, y));
             }
         }
     }
 
     let mut total = 0;
 
-    let mut checked: HashSet<(&Point, &Point)> = HashSet::new();
+    let mut checked = HashSet::new();
 
     for a in &galaxies {
         for b in &galaxies {
@@ -61,10 +55,10 @@ fn calculate_total(input: &String, expansion: usize) -> usize {
 
             checked.insert((a, b));
 
-            let x_min = usize::min(a.x, b.x);
-            let x_max = usize::max(a.x, b.x);
-            let y_min = usize::min(a.y, b.y);
-            let y_max = usize::max(a.y, b.y);
+            let x_min = usize::min(a.0, b.0);
+            let x_max = usize::max(a.0, b.0);
+            let y_min = usize::min(a.1, b.1);
+            let y_max = usize::max(a.1, b.1);
 
             let x_expansion = (x_min..=x_max).filter(|x| empty_cols.contains(&x)).count();
             let y_expansion = (y_min..=y_max).filter(|y| empty_rows.contains(&y)).count();
