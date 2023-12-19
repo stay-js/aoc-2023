@@ -1,6 +1,17 @@
+struct Expression {
+    variable: char,
+    operator: char,
+    value: u32,
+}
+
+enum Rule {
+    Jump(String),
+    JumpIf(Expression, String),
+}
+
 struct Workflow {
     name: String,
-    rules: Vec<String>,
+    rules: Vec<Rule>,
 }
 
 struct Part {
@@ -8,20 +19,43 @@ struct Part {
     m: u32,
     a: u32,
     s: u32,
+    value: u32,
 }
 
 fn first_part(input: &String) {
-    let data = input.split("\n\n").collect::<Vec<&str>>();
+    let data: Vec<&str> = input.split("\n\n").collect();
 
     let workflows: Vec<Workflow> = data[0]
         .lines()
         .map(|line| {
             let line = line.replace('}', "");
-            let data = line.split("{").collect::<Vec<&str>>();
+            let data: Vec<&str> = line.split("{").collect();
+
+            let rules: Vec<Rule> = data[1]
+                .split(",")
+                .map(|rule| {
+                    if !rule.contains(":") {
+                        return Rule::Jump(rule.to_string());
+                    }
+
+                    let parts: Vec<&str> = rule.split(":").collect();
+                    let operator = if rule.contains('<') { '<' } else { '>' };
+                    let expression: Vec<&str> = parts[0].split(operator).collect();
+
+                    return Rule::JumpIf(
+                        Expression {
+                            variable: expression[0].chars().nth(0).unwrap(),
+                            operator,
+                            value: expression[1].parse().unwrap(),
+                        },
+                        parts[1].to_string(),
+                    );
+                })
+                .collect();
 
             return Workflow {
                 name: data[0].to_string(),
-                rules: data[1].split(",").map(|x| x.to_string()).collect(),
+                rules,
             };
         })
         .collect();
@@ -29,7 +63,7 @@ fn first_part(input: &String) {
     let parts: Vec<Part> = data[1]
         .lines()
         .map(|x| {
-            let part = &x[1..&x.len() - 1].split(",").collect::<Vec<&str>>();
+            let part: &Vec<&str> = &x[1..&x.len() - 1].split(",").collect();
 
             let values: Vec<u32> = part
                 .iter()
@@ -41,6 +75,7 @@ fn first_part(input: &String) {
                 m: values[1],
                 a: values[2],
                 s: values[3],
+                value: values.iter().sum(),
             };
         })
         .collect();
@@ -49,57 +84,52 @@ fn first_part(input: &String) {
 
     for part in parts {
         let mut current = workflows.iter().position(|x| &x.name == "in").unwrap();
-
         let mut is_done = false;
 
         while !is_done {
             for rule in &workflows[current].rules {
-                if rule == "A" {
-                    total += part.x + part.m + part.a + part.s;
-                    is_done = true;
-                    break;
-                }
-
-                if rule == "R" {
-                    is_done = true;
-                    break;
-                }
-
-                if !rule.contains(":") {
-                    current = workflows.iter().position(|x| &x.name == rule).unwrap();
-                    break;
-                }
-
-                let parts = rule.split(":").collect::<Vec<&str>>();
-
-                let operator = if rule.contains('<') { '<' } else { '>' };
-
-                let expression = parts[0].split(operator).collect::<Vec<&str>>();
-
-                let variable = match expression[0] {
-                    "x" => part.x,
-                    "m" => part.m,
-                    "a" => part.a,
-                    "s" => part.s,
-                    var => panic!("unknown variable: {}", var),
-                };
-
-                let value = expression[1].parse::<u32>().unwrap();
-
-                if (operator == '<' && variable < value) || (operator == '>' && variable > value) {
-                    if parts[1] == "A" {
-                        total += part.x + part.m + part.a + part.s;
+                if let Rule::Jump(to) = rule {
+                    if to == "A" {
+                        total += part.value;
                         is_done = true;
                         break;
                     }
 
-                    if parts[1] == "R" {
+                    if to == "R" {
                         is_done = true;
                         break;
                     }
 
-                    current = workflows.iter().position(|x| &x.name == parts[1]).unwrap();
+                    current = workflows.iter().position(|x| &x.name == to).unwrap();
                     break;
+                }
+
+                if let Rule::JumpIf(expression, to) = rule {
+                    let variable = match expression.variable {
+                        'x' => part.x,
+                        'm' => part.m,
+                        'a' => part.a,
+                        's' => part.s,
+                        var => panic!("unknown variable: {}", var),
+                    };
+
+                    if (expression.operator == '<' && variable < expression.value)
+                        || (expression.operator == '>' && variable > expression.value)
+                    {
+                        if to == "A" {
+                            total += part.value;
+                            is_done = true;
+                            break;
+                        }
+
+                        if to == "R" {
+                            is_done = true;
+                            break;
+                        }
+
+                        current = workflows.iter().position(|x| &x.name == to).unwrap();
+                        break;
+                    }
                 }
             }
         }
