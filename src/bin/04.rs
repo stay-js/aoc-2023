@@ -33,7 +33,7 @@ fn first_part(input: &String) {
 }
 
 fn second_part(input: &String) {
-    let mut copies: Vec<u32> = (0..input.lines().count()).map(|_| 1).collect();
+    let mut copies: Vec<u32> = vec![1; input.lines().count()];
 
     for (i, line) in input.lines().enumerate() {
         let (winning_numbers, numbers) = parse_line(line);
