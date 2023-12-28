@@ -22,7 +22,7 @@ struct Part {
     value: u32,
 }
 
-fn first_part(input: &String) {
+fn get_data(input: &String) -> (Vec<Part>, Vec<Workflow>) {
     let data: Vec<&str> = input.split("\n\n").collect();
 
     let workflows: Vec<Workflow> = data[0]
@@ -79,6 +79,12 @@ fn first_part(input: &String) {
             };
         })
         .collect();
+
+    return (parts, workflows);
+}
+
+fn first_part(input: &String) {
+    let (parts, workflows) = get_data(input);
 
     let mut total = 0;
 
